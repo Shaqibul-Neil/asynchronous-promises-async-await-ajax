@@ -70,3 +70,4 @@ getCountryData('bangladesh');
 // getCountryData('portugal');
 // getCountryData('united kingdom');
 getCountryData('papua new guinea');
+getCountryData('australia');
