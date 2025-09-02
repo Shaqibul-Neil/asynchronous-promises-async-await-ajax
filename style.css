@@ -14,12 +14,10 @@ body {
   color: #555;
   background-color: #f7f7f7;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .heading {
   font-size: 50px;
+  text-align: center;
 }
 .container {
   display: flex;
@@ -124,4 +122,10 @@ body {
   margin: 2rem;
   border: 3rem solid white;
   box-shadow: 0 2rem 5rem 1rem rgba(0, 0, 0, 0.1);
+}
+.img {
+  width: 500px;
+}
+.fadeIn {
+  opacity: 0.5;
 }
