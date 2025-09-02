@@ -20,6 +20,7 @@ body {
   text-align: center;
 }
 .container {
+  margin-top: 100px;
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -38,7 +39,7 @@ body {
   background-color: #fff;
   box-shadow: 0 2rem 5rem 1rem rgba(0, 0, 0, 0.1);
   font-size: 1.8rem;
-  width: 30rem;
+  width: 35rem;
   border-radius: 0.7rem;
   margin: 0 3rem;
   /* overflow: hidden; */
@@ -63,12 +64,13 @@ body {
 }
 
 .country__img {
-  width: 30rem;
-  height: 17rem;
+  width: 100%;
+  height: 20rem;
   object-fit: cover;
   background-color: #eee;
   border-top-left-radius: 0.7rem;
   border-top-right-radius: 0.7rem;
+  border-bottom: 1px solid gold;
 }
 
 .country__data {
