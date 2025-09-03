@@ -117,7 +117,7 @@ const getCountryAndNeighbor = function (country) {
     //console.log(this.responseText);
 
     const [dataToJSON] = JSON.parse(this.responseText);
-    console.log(dataToJSON);
+    //console.log(dataToJSON);
 
     //showing on the html--render country 1
     renderCountry(dataToJSON);
@@ -134,7 +134,7 @@ const getCountryAndNeighbor = function (country) {
 
       request2.addEventListener('load', function () {
         const [dataToJSON2] = JSON.parse(this.responseText);
-        console.log(dataToJSON2);
+        //console.log(dataToJSON2);
         //showing on the html--render country 1
         renderCountry(dataToJSON2, 'neighbor');
       });
@@ -142,7 +142,7 @@ const getCountryAndNeighbor = function (country) {
   });
 };
 
-getCountryAndNeighbor(`russia`);
+//getCountryAndNeighbor(`russia`);
 
 //******************************************* */
 //identifying callback hell
@@ -165,3 +165,15 @@ getCountryAndNeighbor(`russia`);
 //******************************************* */
 //solution
 //ES6-------Promises and the Fetch API
+
+// const request = fetch('https://restcountries.com/v3.1/name/portugal');
+
+// console.log(request);
+
+//consume a promise
+const getCountryData = function (country) {
+  fetch(`https://restcountries.com/v3.1/name/${country}`)
+    .then(response => response.json())
+    .then(data => renderCountry(data[0]));
+};
+getCountryData('bangladesh');
