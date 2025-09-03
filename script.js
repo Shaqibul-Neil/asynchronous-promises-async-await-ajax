@@ -141,7 +141,7 @@ const getCountryAndNeighbor = function (country) {
     });
   });
 };
-getCountryAndNeighbor(`People's Republic of China`);
+
 getCountryAndNeighbor(`russia`);
 
 //******************************************* */
