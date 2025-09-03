@@ -22,52 +22,108 @@ const countriesContainer = document.querySelector('.countries');
 
 ///////////////////////////////////////
 //First API Call------old school way of doing AJAX
-const getCountryData = function (country) {
+// const getCountryData = function (country) {
+//   const request = new XMLHttpRequest();
+//   request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
+//   request.send();
+//   //console.log(request);
+//   request.addEventListener('load', function () {
+//     //console.log(this.responseText);
+//     //data comes in a json format: obj as string so we need to convert it back into a object. Destructured using [] as it is an obj inside array
+//     const [dataToJSON] = JSON.parse(this.responseText);
+//     console.log(dataToJSON);
+
+//     //   console.log(dataToJSON.currencies.BDT.name);
+//     console.log(dataToJSON.languages);
+//     //   console.log((+dataToJSON.population / 1000000).toFixed(2));
+//     //console.log(dataToJSON.currencies);
+
+//     //languages dynamically convert
+//     const languages = Object.values(dataToJSON.languages).join(' ,');
+//     //console.log(languages);
+
+//     //currencies dynamically convert
+//     const currencies = Object.values(dataToJSON.currencies)
+//       .map(curr => `${curr.symbol}, ${curr.name}`)
+//       .join(' ');
+
+//     //console.log(currencies);
+//     //showing on the html
+//     const HTML = `
+//         <article class="country">
+//           <img class="country__img" src="${dataToJSON.flags.png}" />
+//           <div class="country__data">
+//             <h3 class="country__name">${dataToJSON.name.common}</h3>
+//             <h4 class="country__region">${dataToJSON.region}</h4>
+//             <p class="country__row"><span>👫</span>${(
+//               +dataToJSON.population / 1000000
+//             ).toFixed(2)} M people</p>
+//             <p class="country__row"><span>🗣️</span>${languages}</p>
+//             <p class="country__row"><span>💰</span>${currencies}</p>
+//            </div>
+//         </article>`;
+//     countriesContainer.insertAdjacentHTML('beforeend', HTML);
+//     countriesContainer.style.opacity = 1;
+//   });
+// };
+// getCountryData('bangladesh');
+// // getCountryData('portugal');
+// // getCountryData('united kingdom');
+// getCountryData('papua new guinea');
+// getCountryData('australia');
+
+//-----------------------------------------------
+//Sequence of ajax call--get neighbor country
+//creating html file function
+
+const renderCountry = function (data) {
+  //languages dynamically convert
+  const languages = Object.values(data.languages).join(' ,');
+
+  //currencies dynamically convert
+  const currencies = Object.values(data.currencies)
+    .map(curr => `${curr.symbol}, ${curr.name}`)
+    .join(' ');
+  const HTML = `
+        <article class="country">
+          <img class="country__img" src="${data.flags.png}" />
+          <div class="country__data">
+            <h3 class="country__name">${data.name.common}</h3>
+            <h4 class="country__region">${data.region}</h4>
+            <p class="country__row"><span>👫</span>${(
+              +data.population / 1000000
+            ).toFixed(2)} M people</p>
+            <p class="country__row"><span>🗣️</span>${languages}</p>
+            <p class="country__row"><span>💰</span>${currencies}</p>
+           </div>
+        </article>`;
+  countriesContainer.insertAdjacentHTML('beforeend', HTML);
+  countriesContainer.style.opacity = 1;
+};
+
+const getCountryAndNeighbor = function (country) {
+  //Ajax call country 1
   const request = new XMLHttpRequest();
   request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
   request.send();
   //console.log(request);
   request.addEventListener('load', function () {
     //console.log(this.responseText);
-    //data comes in a json format: obj as string so we need to convert it back into a object. Destructured using [] as it is an obj inside array
+
     const [dataToJSON] = JSON.parse(this.responseText);
-    //console.log(dataToJSON);
+    console.log(dataToJSON);
 
-    //   console.log(dataToJSON.currencies.BDT.name);
-    console.log(dataToJSON.languages);
-    //   console.log((+dataToJSON.population / 1000000).toFixed(2));
-    //console.log(dataToJSON.currencies);
+    //showing on the html--render country 1
+    renderCountry(dataToJSON);
 
-    //languages dynamically convert
-    const languages = Object.values(dataToJSON.languages).join(' ,');
-    //console.log(languages);
-
-    //currencies dynamically convert
-    const currencies = Object.values(dataToJSON.currencies)
-      .map(curr => `${curr.symbol}, ${curr.name}`)
-      .join(' ');
-
-    //console.log(currencies);
-    //showing on the html
-    const HTML = `
-        <article class="country">
-          <img class="country__img" src="${dataToJSON.flags.png}" />
-          <div class="country__data">
-            <h3 class="country__name">${dataToJSON.name.common}</h3>
-            <h4 class="country__region">${dataToJSON.region}</h4>
-            <p class="country__row"><span>👫</span>${(
-              +dataToJSON.population / 1000000
-            ).toFixed(2)} M people</p>
-            <p class="country__row"><span>🗣️</span>${languages}</p>
-            <p class="country__row"><span>💰</span>${currencies}</p>
-           </div>
-        </article>`;
-    countriesContainer.insertAdjacentHTML('beforeend', HTML);
-    countriesContainer.style.opacity = 1;
+    //get neighbor country
+    const neighbor = dataToJSON.borders?.[0];
+    if (!neighbor) return;
+    console.log(neighbor);
+    //Ajax call country 2
+    const request = new XMLHttpRequest();
+    request.open('GET', `https://restcountries.com/v3.1/alpha/${neighbor}`);
+    request.send();
   });
 };
-getCountryData('bangladesh');
-// getCountryData('portugal');
-// getCountryData('united kingdom');
-getCountryData('papua new guinea');
-getCountryData('australia');
+getCountryAndNeighbor('new zealand');
