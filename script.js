@@ -218,3 +218,5 @@ const getCountryData = function (country) {
     .then(data => renderCountry(data[0], 'neighbor'));
 };
 getCountryData('portugal');
+
+//Handling Rejected Promises
