@@ -78,69 +78,69 @@ const neighborCountriesContainer = document.querySelector('.neighbors');
 //nested call backs
 //creating html file function
 
-const renderCountry = function (data, className = '') {
-  //languages dynamically convert
-  const languages = Object.values(data.languages).join(' ,');
+// const renderCountry = function (data, className = '') {
+//   //languages dynamically convert
+//   const languages = Object.values(data.languages).join(' ,');
 
-  //currencies dynamically convert
-  const currencies = Object.values(data.currencies)
-    .map(curr => `${curr.symbol}, ${curr.name}`)
-    .join(' ');
-  const HTML = `
-        <article class="country ${className}">
-          <img class="country__img" src="${data.flags.png}" />
-          <div class="country__data">
-            <h3 class="country__name">${data.name.common}</h3>
-            <h4 class="country__region">${data.region}</h4>
-            <p class="country__row"><span>👫</span>${(
-              +data.population / 1000000
-            ).toFixed(2)} M people</p>
-            <p class="country__row"><span>🗣️</span>${languages}</p>
-            <p class="country__row"><span>💰</span>${currencies}</p>
-           </div>
-        </article>`;
-  if (className === 'neighbor') {
-    neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
-  } else {
-    mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
-  }
-  countriesContainer.style.opacity = 1;
-};
+//   //currencies dynamically convert
+//   const currencies = Object.values(data.currencies)
+//     .map(curr => `${curr.symbol}, ${curr.name}`)
+//     .join(' ');
+//   const HTML = `
+//         <article class="country ${className}">
+//           <img class="country__img" src="${data.flags.png}" />
+//           <div class="country__data">
+//             <h3 class="country__name">${data.name.common}</h3>
+//             <h4 class="country__region">${data.region}</h4>
+//             <p class="country__row"><span>👫</span>${(
+//               +data.population / 1000000
+//             ).toFixed(2)} M people</p>
+//             <p class="country__row"><span>🗣️</span>${languages}</p>
+//             <p class="country__row"><span>💰</span>${currencies}</p>
+//            </div>
+//         </article>`;
+//   if (className === 'neighbor') {
+//     neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
+//   } else {
+//     mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
+//   }
+//   countriesContainer.style.opacity = 1;
+// };
 
-const getCountryAndNeighbor = function (country) {
-  //Ajax call country 1
-  const request = new XMLHttpRequest();
-  request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-  request.send();
-  //console.log(request);
-  request.addEventListener('load', function () {
-    //console.log(this.responseText);
+// const getCountryAndNeighbor = function (country) {
+//   //Ajax call country 1
+//   const request = new XMLHttpRequest();
+//   request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
+//   request.send();
+//   //console.log(request);
+//   request.addEventListener('load', function () {
+//     //console.log(this.responseText);
 
-    const [dataToJSON] = JSON.parse(this.responseText);
-    //console.log(dataToJSON);
+//     const [dataToJSON] = JSON.parse(this.responseText);
+//     //console.log(dataToJSON);
 
-    //showing on the html--render country 1
-    renderCountry(dataToJSON);
+//     //showing on the html--render country 1
+//     renderCountry(dataToJSON);
 
-    //get neighbor country
-    const neighbors = dataToJSON.borders;
+//     //get neighbor country
+//     const neighbors = dataToJSON.borders;
 
-    if (!neighbors) return;
-    neighbors.forEach(neighbor => {
-      //Ajax call country 2
-      const request2 = new XMLHttpRequest();
-      request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbor}`);
-      request2.send();
+//     if (!neighbors) return;
+//     neighbors.forEach(neighbor => {
+//       //Ajax call country 2
+//       const request2 = new XMLHttpRequest();
+//       request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbor}`);
+//       request2.send();
 
-      request2.addEventListener('load', function () {
-        const [dataToJSON2] = JSON.parse(this.responseText);
-        //console.log(dataToJSON2);
-        //showing on the html--render country 1
-        renderCountry(dataToJSON2, 'neighbor');
-      });
-    });
-  });
-};
+//       request2.addEventListener('load', function () {
+//         const [dataToJSON2] = JSON.parse(this.responseText);
+//         //console.log(dataToJSON2);
+//         //showing on the html--render country 1
+//         renderCountry(dataToJSON2, 'neighbor');
+//       });
+//     });
+//   });
+// };
 
 //getCountryAndNeighbor(`russia`);
 
@@ -170,10 +170,51 @@ const getCountryAndNeighbor = function (country) {
 
 // console.log(request);
 
+//******************************************** */
+const renderCountry = function (data, className = '') {
+  //languages dynamically convert
+  const languages = Object.values(data.languages).join(' ,');
+
+  //currencies dynamically convert
+  const currencies = Object.values(data.currencies)
+    .map(curr => `${curr.symbol}, ${curr.name}`)
+    .join(' ');
+  const HTML = `
+        <article class="country ${className}">
+          <img class="country__img" src="${data.flags.png}" />
+          <div class="country__data">
+            <h3 class="country__name">${data.name.common}</h3>
+            <h4 class="country__region">${data.region}</h4>
+            <p class="country__row"><span>👫</span>${(
+              +data.population / 1000000
+            ).toFixed(2)} M people</p>
+            <p class="country__row"><span>🗣️</span>${languages}</p>
+            <p class="country__row"><span>💰</span>${currencies}</p>
+           </div>
+        </article>`;
+  if (className === 'neighbor') {
+    neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
+  } else {
+    mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
+  }
+  countriesContainer.style.opacity = 1;
+};
+
 //consume a promise
 const getCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
     .then(response => response.json())
-    .then(data => renderCountry(data[0]));
+    .then(data => {
+      renderCountry(data[0]);
+
+      //neighbor countries
+      //Chaining Promises
+      const neighbor = data[0].borders?.[0];
+      if (!neighbor) return;
+      return fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`);
+      //always return the promise and then chain it outside of this then
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data[0], 'neighbor'));
 };
-getCountryData('bangladesh');
+getCountryData('portugal');
