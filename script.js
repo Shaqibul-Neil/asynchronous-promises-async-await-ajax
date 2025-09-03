@@ -12,7 +12,7 @@ const neighborCountriesContainer = document.querySelector('.neighbors');
 // NEW REVERSE GEOCODING API URL (use instead of the URL shown in videos):
 // https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}
 
-///////////////////////////////////////
+//******************************************* */
 // const h2 = document.querySelector('h2');
 // const image = document.querySelector('.img'); //synchronous way
 // image.src = 'img/img-1.jpg'; //asynchronous way: setting the src of an img is loading the img in background. the code will not be blocked means other code will be executed except this one
@@ -21,7 +21,7 @@ const neighborCountriesContainer = document.querySelector('.neighbors');
 // }); //a callback function for when the img is loaded. we deferred the action for the future making the code non blocking
 // h2.textContent = 'hello';
 
-///////////////////////////////////////
+//******************************************* */
 //First API Call------old school way of doing AJAX
 // const getCountryData = function (country) {
 //   const request = new XMLHttpRequest();
@@ -73,7 +73,7 @@ const neighborCountriesContainer = document.querySelector('.neighbors');
 // getCountryData('papua new guinea');
 // getCountryData('australia');
 
-//-----------------------------------------------
+//******************************************* */
 //Sequence of ajax call--get neighbor country
 //nested call backs
 //creating html file function
@@ -144,19 +144,24 @@ const getCountryAndNeighbor = function (country) {
 getCountryAndNeighbor(`People's Republic of China`);
 getCountryAndNeighbor(`russia`);
 
+//******************************************* */
 //identifying callback hell
-setTimeout(() => {
-  console.log(`1 second passed`);
-  setTimeout(() => {
-    console.log(`2 second passed`);
-    setTimeout(() => {
-      console.log(`3 second passed`);
-      setTimeout(() => {
-        console.log(`4 second passed`);
-        setTimeout(() => {
-          console.log(`5 second passed`);
-        }, 1000);
-      }, 1000);
-    }, 1000);
-  }, 1000);
-}, 1000);
+// setTimeout(() => {
+//   console.log(`1 second passed`);
+//   setTimeout(() => {
+//     console.log(`2 second passed`);
+//     setTimeout(() => {
+//       console.log(`3 second passed`);
+//       setTimeout(() => {
+//         console.log(`4 second passed`);
+//         setTimeout(() => {
+//           console.log(`5 second passed`);
+//         }, 1000);
+//       }, 1000);
+//     }, 1000);
+//   }, 1000);
+// }, 1000);
+
+//******************************************* */
+//solution
+//ES6-------Promises and the Fetch API
