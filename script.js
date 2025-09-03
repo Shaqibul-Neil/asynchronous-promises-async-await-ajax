@@ -2,7 +2,8 @@
 
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
-
+const mainCountryContainer = document.querySelector('.main-country');
+const neighborCountriesContainer = document.querySelector('.neighbors');
 // NEW COUNTRIES API URL (use instead of the URL shown in videos):
 // https://restcountries.com/v2/name/portugal
 
@@ -74,9 +75,10 @@ const countriesContainer = document.querySelector('.countries');
 
 //-----------------------------------------------
 //Sequence of ajax call--get neighbor country
+//nested call backs
 //creating html file function
 
-const renderCountry = function (data) {
+const renderCountry = function (data, className = '') {
   //languages dynamically convert
   const languages = Object.values(data.languages).join(' ,');
 
@@ -85,7 +87,7 @@ const renderCountry = function (data) {
     .map(curr => `${curr.symbol}, ${curr.name}`)
     .join(' ');
   const HTML = `
-        <article class="country">
+        <article class="country ${className}">
           <img class="country__img" src="${data.flags.png}" />
           <div class="country__data">
             <h3 class="country__name">${data.name.common}</h3>
@@ -97,7 +99,11 @@ const renderCountry = function (data) {
             <p class="country__row"><span>💰</span>${currencies}</p>
            </div>
         </article>`;
-  countriesContainer.insertAdjacentHTML('beforeend', HTML);
+  if (className === 'neighbor') {
+    neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
+  } else {
+    mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
+  }
   countriesContainer.style.opacity = 1;
 };
 
@@ -117,13 +123,23 @@ const getCountryAndNeighbor = function (country) {
     renderCountry(dataToJSON);
 
     //get neighbor country
-    const neighbor = dataToJSON.borders?.[0];
-    if (!neighbor) return;
-    console.log(neighbor);
-    //Ajax call country 2
-    const request = new XMLHttpRequest();
-    request.open('GET', `https://restcountries.com/v3.1/alpha/${neighbor}`);
-    request.send();
+    const neighbors = dataToJSON.borders;
+
+    if (!neighbors) return;
+    neighbors.forEach(neighbor => {
+      //Ajax call country 2
+      const request2 = new XMLHttpRequest();
+      request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbor}`);
+      request2.send();
+
+      request2.addEventListener('load', function () {
+        const [dataToJSON2] = JSON.parse(this.responseText);
+        console.log(dataToJSON2);
+        //showing on the html--render country 1
+        renderCountry(dataToJSON2, 'neighbor');
+      });
+    });
   });
 };
-getCountryAndNeighbor('new zealand');
+getCountryAndNeighbor(`People's Republic of China`);
+getCountryAndNeighbor(`russia`);
