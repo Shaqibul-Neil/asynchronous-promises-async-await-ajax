@@ -171,7 +171,7 @@ const neighborCountriesContainer = document.querySelector('.neighbors');
 // console.log(request);
 
 //******************************************** */
-const renderError = msg => {
+/* const renderError = msg => {
   countriesContainer.insertAdjacentText('beforeend', msg);
   //countriesContainer.style.opacity = 1;
 };
@@ -272,29 +272,30 @@ btn.addEventListener('click', function () {
 });
 
 //challenge 1
-const whereAmI = (lat, lng, errMsg = `Something went wrong`) => {
+const whereAmI = (lat, lng) => {
   fetch(
     `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
   )
     .then(response => {
-      if (!response.ok) throw new Error(`${errMsg} : ${response.status}`);
-      console.log(response);
+      //console.log(response);
+      if (!response.ok)
+        throw new Error(`Problem with geocoding : ${response.status}`);
       return response.json();
     })
     .then(data => {
-      console.log(data);
+      //console.log(data);
       console.log(`You're in ${data.city}, ${data.countryName}`);
       return fetch(`https://restcountries.com/v3.1/name/${data.countryName}`);
     })
     .then(response => {
-      console.log(response);
+      //console.log(response);
       if (!response.ok)
         throw new Error(`Country not found (${response.status})`);
       return response.json();
     })
     .then(data => {
       renderCountry(data[0]);
-      console.log(data);
+      //console.log(data);
     })
     .catch(err => {
       console.log(`${err.message}`);
@@ -303,3 +304,7 @@ const whereAmI = (lat, lng, errMsg = `Something went wrong`) => {
 whereAmI(52.508, 13.381);
 whereAmI(19.037, 72.873);
 whereAmI(-33.933, 18.474);
+*/
+
+///////////////////////////////////////
+// The Event Loop in Practice
