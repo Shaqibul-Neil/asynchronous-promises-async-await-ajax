@@ -171,6 +171,11 @@ const neighborCountriesContainer = document.querySelector('.neighbors');
 // console.log(request);
 
 //******************************************** */
+const renderError = msg => {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  //countriesContainer.style.opacity = 1;
+};
+
 const renderCountry = function (data, className = '') {
   //languages dynamically convert
   const languages = Object.values(data.languages).join(' ,');
@@ -197,17 +202,17 @@ const renderCountry = function (data, className = '') {
   } else {
     mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
   }
-  countriesContainer.style.opacity = 1;
+  //countriesContainer.style.opacity = 1;
 };
 
 //consume a promise
 const getCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then(response => {
+    .then(response =>
       //console.log(response);
-      if (!response.ok) throw new Error(`Country not found ${response.status}`);
-      return response.json();
-    })
+
+      response.json()
+    )
     .then(data => {
       //console.log(data);
       renderCountry(data[0]);
@@ -218,35 +223,38 @@ const getCountryData = function (country) {
       //console.log(neighbors);
       if (!neighbors || neighbors.length === 0)
         throw new Error(`No Neighbors Found`);
-      else {
-        //fetch all neighbors together এখানে neighbors.map(...) → প্রত্যেকটা neighbor এর জন্য একটা fetch(...).then(...) return করছে।ফলে আমাদের কাছে একটা array of Promises চলে আসলো।Promise.all([...]) সেই array নেয় → সব resolve হওয়া পর্যন্ত wait করে। তারপর resolve হলে, সবার JSON data একসাথে একটা array আকারে রিটার্ন করে।
-        return Promise.all(
-          neighbors.map(neighbor =>
-            fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`).then(
-              response => {
-                console.log(response);
-                if (!response.ok) {
-                  throw new Error(`Neighbor not found: ${response.status}`);
-                } else return response.json();
-              }
-            )
+      //fetch all neighbors together এখানে neighbors.map(...) → প্রত্যেকটা neighbor এর জন্য একটা fetch(...).then(...) return করছে।ফলে আমাদের কাছে একটা array of Promises চলে আসলো।Promise.all([...]) সেই array নেয় → সব resolve হওয়া পর্যন্ত wait করে। তারপর resolve হলে, সবার JSON data একসাথে একটা array আকারে রিটার্ন করে। Promise.all([p1, p2, p3]) → resolve হবে [result1, result2, result3] এই [result1, result2, result3]-ই হচ্ছে neighborArray
+      return Promise.all(
+        neighbors.map(neighbor =>
+          fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`).then(
+            response => {
+              // console.log(response);
+              // if (!response.ok) {
+              //   throw new Error(`Neighbor not found: ${response.status}`);
+              // } else
+              return response.json();
+            }
           )
-        );
-      }
-      //always return the promise and then chain it outside of this then
+        )
+      ); //promise all ended
     })
+    //always return the promise and then chain it outside of previous then. it returns a fulfilled value which we can access outside
     .then(neighborArray => {
       neighborArray.forEach(data => renderCountry(data[0], 'neighbor'));
     })
     .catch(err => {
-      console.log(err.message);
-      countriesContainer.insertAdjacentText('beforeend', `${err.message}`);
+      //console.log(err.message);
+      console.log(err);
+      console.error(`${err.message} ❌❌❌❌`);
+      renderError(`Something went wrong : ${err.message}`);
     })
+    //then is called when promise is fulfilled, catch is called when it is rejected and finally is called every time
     .finally(() => {
       countriesContainer.style.opacity = 1;
     });
 };
-
-getCountryData('australia');
+btn.addEventListener('click', function () {
+  getCountryData('bdsdasd');
+});
 
 //Handling Rejected Promises
