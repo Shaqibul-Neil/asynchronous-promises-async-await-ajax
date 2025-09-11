@@ -205,14 +205,24 @@ const renderCountry = function (data, className = '') {
   //countriesContainer.style.opacity = 1;
 };
 
+const getJson = (url, errMsg = 'Something went wrong') => {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errMsg} (${response.status} error)`);
+    return response.json();
+  });
+};
+
 //consume a promise
 const getCountryData = function (country) {
-  fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then(response =>
-      //console.log(response);
+  getJson(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
+    // fetch(`https://restcountries.com/v3.1/name/${country}`)
+    //   .then(response => {
+    //     console.log(response);
 
-      response.json()
-    )
+    //     if (!response.ok)
+    //       throw new Error(`Country not found (${response.status} error)`);
+    //     return response.json();
+    //   })
     .then(data => {
       //console.log(data);
       renderCountry(data[0]);
@@ -226,14 +236,18 @@ const getCountryData = function (country) {
       //fetch all neighbors together এখানে neighbors.map(...) → প্রত্যেকটা neighbor এর জন্য একটা fetch(...).then(...) return করছে।ফলে আমাদের কাছে একটা array of Promises চলে আসলো।Promise.all([...]) সেই array নেয় → সব resolve হওয়া পর্যন্ত wait করে। তারপর resolve হলে, সবার JSON data একসাথে একটা array আকারে রিটার্ন করে। Promise.all([p1, p2, p3]) → resolve হবে [result1, result2, result3] এই [result1, result2, result3]-ই হচ্ছে neighborArray
       return Promise.all(
         neighbors.map(neighbor =>
-          fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`).then(
-            response => {
-              // console.log(response);
-              // if (!response.ok) {
-              //   throw new Error(`Neighbor not found: ${response.status}`);
-              // } else
-              return response.json();
-            }
+          // fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`).then(
+          //   response => {
+          //     // console.log(response);
+          //     // if (!response.ok) {
+          //     //   throw new Error(`Neighbor not found: ${response.status}`);
+          //     // } //else
+          //     return response.json();
+          //   }
+          // )
+          getJson(
+            `https://restcountries.com/v3.1/name/${neighbor}`,
+            'Neighbor not found:'
           )
         )
       ); //promise all ended
@@ -244,8 +258,8 @@ const getCountryData = function (country) {
     })
     .catch(err => {
       //console.log(err.message);
-      console.log(err);
-      console.error(`${err.message} ❌❌❌❌`);
+      // console.log(err);
+      // console.error(`${err.message} ❌❌❌❌`);
       renderError(`Something went wrong : ${err.message}`);
     })
     //then is called when promise is fulfilled, catch is called when it is rejected and finally is called every time
@@ -254,7 +268,7 @@ const getCountryData = function (country) {
     });
 };
 btn.addEventListener('click', function () {
-  getCountryData('bdsdasd');
+  getCountryData('australia');
 });
 
 //Handling Rejected Promises
