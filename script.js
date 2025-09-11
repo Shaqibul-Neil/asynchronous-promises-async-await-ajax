@@ -203,20 +203,50 @@ const renderCountry = function (data, className = '') {
 //consume a promise
 const getCountryData = function (country) {
   fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then(response => response.json())
+    .then(response => {
+      //console.log(response);
+      if (!response.ok) throw new Error(`Country not found ${response.status}`);
+      return response.json();
+    })
     .then(data => {
+      //console.log(data);
       renderCountry(data[0]);
 
       //neighbor countries
       //Chaining Promises
-      const neighbor = data[0].borders?.[0];
-      if (!neighbor) return;
-      return fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`);
+      const neighbors = data[0].borders;
+      //console.log(neighbors);
+      if (!neighbors || neighbors.length === 0)
+        throw new Error(`No Neighbors Found`);
+      else {
+        //fetch all neighbors together এখানে neighbors.map(...) → প্রত্যেকটা neighbor এর জন্য একটা fetch(...).then(...) return করছে।ফলে আমাদের কাছে একটা array of Promises চলে আসলো।Promise.all([...]) সেই array নেয় → সব resolve হওয়া পর্যন্ত wait করে। তারপর resolve হলে, সবার JSON data একসাথে একটা array আকারে রিটার্ন করে।
+        return Promise.all(
+          neighbors.map(neighbor =>
+            fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`).then(
+              response => {
+                console.log(response);
+                if (!response.ok) {
+                  throw new Error(`Neighbor not found: ${response.status}`);
+                } else return response.json();
+              }
+            )
+          )
+        );
+      }
       //always return the promise and then chain it outside of this then
     })
-    .then(response => response.json())
-    .then(data => renderCountry(data[0], 'neighbor'));
+    .then(neighborArray => {
+      neighborArray.forEach(data => renderCountry(data[0], 'neighbor'));
+    })
+    .catch(err => {
+      console.log(err.message);
+      countriesContainer.insertAdjacentText('beforeend', `${err.message}`);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
 };
-getCountryData('portugal');
+
+getCountryData('australia');
 
 //Handling Rejected Promises
