@@ -1082,12 +1082,13 @@ getThreeCountries('portugal', 'bangladesh', 'germany');
 
 ////////////////////////
 const createImage = function (imgPath) {
+  //createImage নিজেই promise ফেরত দেয় মানে এটা promise object
   return new Promise((resolve, reject) => {
     const img = document.createElement('img');
     img.src = imgPath;
     img.addEventListener('load', () => {
       imageContainer.appendChild(img);
-      resolve(img);
+      resolve(img); //Image load হলে resolve(img) হয় → তখন await বা then দিয়ে access করতে পারি।
     });
     img.addEventListener('error', () => {
       reject(new Error('Image not found'));
@@ -1100,6 +1101,7 @@ const wait = seconds => {
 };
 
 const loadNPause = async function () {
+  //sequential loading
   try {
     //load -image-1
     let image = await createImage('img/img-1.jpg');
@@ -1116,4 +1118,28 @@ const loadNPause = async function () {
     console.error(error);
   }
 };
-loadNPause();
+//loadNPause();
+const loadAll = async function (imgArr) {
+  const imgs = imgArr.map(async img => await createImage(img)); // an async func alwz returns a promise not the value that we are interested in. asyc func j promise return krbe setar fulfuilled value e hcche amader value jta amra return krte chai
+  console.log(imgs); //promise array
+  //now need to pick out these images from the promise array
+  const images = await Promise.all(imgs);
+  console.log(images);
+  images.forEach(img => img.classList.add('parallel'));
+};
+loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);
+
+/*map(async img => await createImage(img)) লিখলে → map এর প্রতিটি iteration থেকে Promise return হবে। createImage already promise → map এর ভিতরে async/await লাগানো optional।
+
+মানে imgs array আসলে এমন হবে: [Promise, Promise, Promise]।
+
+তারপর await Promise.all(imgs) দিলে সব promise resolve হওয়ার জন্য wait করবে।
+
+Promise.all(imgs)
+
+সব promise একসাথে parallel load হবে।
+
+await দিয়ে Promise.all এ wait করলে সব image load হওয়ার পর images array পাবে।
+
+images.forEach দিয়ে সব image কে .parallel class দেওয়া যায়।
+*/
