@@ -654,12 +654,12 @@ const wait = ms => {
 // hide the current image, to hide it we need a global variable
 let currentImage;
 createImage('img/img-1.jpg')
-  .then(img => {
+  .then(img => { //we passed img parameter because load resolved has img parameter
     currentImage = img;
     console.log('Img-1 loaded');
     return wait(2);
   }) //setTimeout / wait + createImage একসাথে direct inline লিখলে chaining ভেঙে যায়। তাই আমরা wait return Promise করি, আর পরের createImage .then() এ call করি। .then() থেকে যা return করা হয়, সেটা পরের .then() এর input হিসেবে আসে। direct createImage('img/img-2.jpg') call করলে previous wait(2) কে respect করবে না, timing ঠিক থাকবে না।
-  .then(() => {
+  .then(() => { //wait doesnt have any resolved parameter thats why we didnt pass any parameter in then
     //After the 2 seconds have passed, hide the 1st image (set display to 'none'), and load a second image
     currentImage.style.display = 'none';
     return createImage('img/img-2.jpg');
@@ -730,3 +730,6 @@ createImage('img/img-1.jpg')
 //   }
 // };
 // loadImages();
+
+///////////////////////////////////////
+// Consuming Promises with Async/Await
