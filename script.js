@@ -331,7 +331,7 @@ whereAmI(-33.933, 18.474);
 // Building a Simple Promise
 
 // const lotteryPromise = new Promise(function (resolve, reject) {
-//   console.log('lottery draw happening'); //Synchronous start):new Promise(...) constructor সাথে সাথে চালু হয়।
+//   console.log('lottery draw happening'); //Synchronous start):new Promise(...) constructor সাথে সাথে চালু হয়। Promise constructor synchronous
 //   setTimeout(() => {
 //     //Async scheduling setTimeout(..., 2000) Web API কে টাস্ক দেয়।
 //     //
@@ -367,27 +367,33 @@ Event loop দেখে main thread free, তখন callback চালায় →
 */
 
 //Promisifying set timeout
-const wait = seconds => {
-  return new Promise(resolve => {
-    setTimeout(resolve, seconds * 1000); //setTimeout(() => resolve(`Waited ${seconds} seconds ⏳`), seconds * 1000); -->with value
-  });
-};
-wait(1)
-  .then(() => {
-    //then no parameter because we didnt pass anything in resolve and we just called it in the set timeout
-    console.log('1 second passed');
-    return wait(2); //নতুন promise রিটার্ন করে।
-  })
-  .then(() => {
-    console.log('2 second passed');
-    return wait(3);
-  })
-  .then(() => {
-    console.log('3 second passed');
-    return wait(4);
-  })
-  .then(() => {
-    console.log('4 second passed');
-    return wait(5);
-  })
-  .then(() => console.log('5 second passed'));
+// const wait = seconds => {
+//   return new Promise(resolve => {
+//     setTimeout(resolve, seconds * 1000); //setTimeout(() => resolve(`Waited ${seconds} seconds ⏳`), seconds * 1000); -->with value
+//   });
+// };
+// wait(1)
+//   .then(() => {
+//     //then no parameter because we didnt pass anything in resolve and we just called it in the set timeout
+//     console.log('1 second passed');
+//     return wait(2); //নতুন promise রিটার্ন করে।
+//   })
+//   .then(() => {
+//     console.log('2 second passed');
+//     return wait(3);
+//   })
+//   .then(() => {
+//     console.log('3 second passed');
+//     return wait(4);
+//   })
+//   .then(() => {
+//     console.log('4 second passed');
+//     return wait(5);
+//   })
+//   .then(() => console.log('5 second passed'));
+
+// Promise.resolve('abc').then(ab => console.log(ab));
+// Promise.reject('abc').catch(ab => console.error(ab));
+
+/////////////////////////////////////////
+//Promisifying the Geolocation API
