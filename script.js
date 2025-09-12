@@ -1079,3 +1079,41 @@ getThreeCountries('portugal', 'bangladesh', 'germany');
 //   } catch (error) {}
 // };
 // loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);
+
+////////////////////////
+const createImage = function (imgPath) {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img');
+    img.src = imgPath;
+    img.addEventListener('load', () => {
+      imageContainer.appendChild(img);
+      resolve(img);
+    });
+    img.addEventListener('error', () => {
+      reject(new Error('Image not found'));
+    });
+  });
+};
+
+const wait = seconds => {
+  return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+};
+
+const loadNPause = async function () {
+  try {
+    //load -image-1
+    let image = await createImage('img/img-1.jpg');
+    console.log('Image - 1 loaded');
+    await wait(2);
+    image.style.display = 'none';
+
+    //load -image-2
+    image = await createImage('img/img-2.jpg');
+    console.log('Image - 2 loaded');
+    await wait(2);
+    image.style.display = 'none';
+  } catch (error) {
+    console.error(error);
+  }
+};
+loadNPause();
