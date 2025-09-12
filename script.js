@@ -330,22 +330,22 @@ whereAmI(-33.933, 18.474);
 ///////////////////////////////////////
 // Building a Simple Promise
 
-const lotteryPromise = new Promise(function (resolve, reject) {
-  console.log('lottery draw happening'); //Synchronous start):new Promise(...) constructor সাথে সাথে চালু হয়।
-  setTimeout(() => {
-    //Async scheduling setTimeout(..., 2000) Web API কে টাস্ক দেয়।
-    //
-    if (Math.random() >= 0.5) resolve('You Win');
-    //whatever we pass in resolve we can consume it later with then
-    else reject(new Error('You Lose'));
-    console.log('Happy to finally get the result'); //eta age asbe if else er
-  }, 2000);
-});
+// const lotteryPromise = new Promise(function (resolve, reject) {
+//   console.log('lottery draw happening'); //Synchronous start):new Promise(...) constructor সাথে সাথে চালু হয়।
+//   setTimeout(() => {
+//     //Async scheduling setTimeout(..., 2000) Web API কে টাস্ক দেয়।
+//     //
+//     if (Math.random() >= 0.5) resolve('You Win');
+//     //whatever we pass in resolve we can consume it later with then
+//     else reject(new Error('You Lose'));
+//     console.log('Happy to finally get the result'); //eta age asbe if else er
+//   }, 2000);
+// });
 //lottery promise is a promise object. resolve বা reject হওয়ার পর .then()/.catch() এর callback microtask queue তে যায়। Microtask সবসময় callback queue এর আগেই execute হয়, কিন্তু এখানে callback already শেষ হয়েছে, তাই microtask এখনই চালু হয়।
-lotteryPromise
-  .then(res => console.log(res))
-  .catch(err => console.error(err))
-  .finally(() => console.log('Lottery Draw finished'));
+// lotteryPromise
+//   .then(res => console.log(res))
+//   .catch(err => console.error(err))
+//   .finally(() => console.log('Lottery Draw finished'));
 
 /*JavaScript মূল thread এ এটা এক্সিকিউট করে না, বরং Web API environment কে বলে দেয় —
 "এই callback function টা ২০০০ms পরে চালাও।"
@@ -365,3 +365,29 @@ Event loop দেখে main thread free, তখন callback চালায় →
 আগে synchronous log গুলো বের হবে (Happy to finally get the result)
 তারপর async .then() বা .catch() execute হবে।
 */
+
+//Promisifying set timeout
+const wait = seconds => {
+  return new Promise(resolve => {
+    setTimeout(resolve, seconds * 1000); //setTimeout(() => resolve(`Waited ${seconds} seconds ⏳`), seconds * 1000); -->with value
+  });
+};
+wait(1)
+  .then(() => {
+    //then no parameter because we didnt pass anything in resolve and we just called it in the set timeout
+    console.log('1 second passed');
+    return wait(2); //নতুন promise রিটার্ন করে।
+  })
+  .then(() => {
+    console.log('2 second passed');
+    return wait(3);
+  })
+  .then(() => {
+    console.log('3 second passed');
+    return wait(4);
+  })
+  .then(() => {
+    console.log('4 second passed');
+    return wait(5);
+  })
+  .then(() => console.log('5 second passed'));
