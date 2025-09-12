@@ -753,6 +753,7 @@ whereAmI('portugal');
 // তাই এই লাইন আগে execute হবে।
 console.log('6---2');
 */
+/*
 //error message
 const renderError = msg => {
   countriesContainer.insertAdjacentText('beforeend', msg);
@@ -861,3 +862,46 @@ console.log('1. Getting the location');
   }
   console.log('3. got the location');
 })();
+*/
+
+///////////////////////////////////////////
+//Running Promises in Parallel
+//Let's now imagine that we wanted to get some data about three countries at the same time, but in which the order that the data arrives does not matter at all.
+
+const getJson = async (url, errMsg = 'Something went wrong') => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`${errMsg} (${response.status})`);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(errMsg);
+  }
+};
+
+const getThreeCountries = async function (c1, c2, c3) {
+  try {
+    //Sequential fetching -->this way data 2 waits for data 1 to finish fetching
+    // const [data1] = await getJson(`https://restcountries.com/v3.1/name/${c1}`); //it gives an array. now destructure.
+    // const [data2] = await getJson(`https://restcountries.com/v3.1/name/${c2}`);
+    // const [data3] = await getJson(`https://restcountries.com/v3.1/name/${c3}`);
+    // const arrayOfCities = [data1.capital, data2.capital, data3.capital].flat();
+    // console.log(arrayOfCities); //we wanted an array of city
+
+    //Prallel fetching
+    //helper function on promise constructor. static method
+    const datas = await Promise.all([
+      getJson(`https://restcountries.com/v3.1/name/${c1}`),
+      getJson(`https://restcountries.com/v3.1/name/${c2}`),
+      getJson(`https://restcountries.com/v3.1/name/${c3}`),
+    ]);
+    const arrayOfCities = datas
+      .flat()
+      .map(data => data.capital)
+      .flat();
+    console.log(arrayOfCities);
+  } catch (err) {
+    console.error(err);
+  }
+};
+getThreeCountries('portugal', 'bangladesh', 'germany');
