@@ -4,6 +4,7 @@ const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 const mainCountryContainer = document.querySelector('.main-country');
 const neighborCountriesContainer = document.querySelector('.neighbors');
+const imageContainer = document.querySelector('.images');
 // NEW COUNTRIES API URL (use instead of the URL shown in videos):
 // https://restcountries.com/v2/name/portugal
 
@@ -407,34 +408,34 @@ Event loop দেখে main thread free, তখন callback চালায় →
 //console.log('Getting Position');
 
 //rendering country on dom
-const renderCountry = function (data, className = '') {
-  //languages dynamically convert
-  const languages = Object.values(data.languages).join(' ,');
+// const renderCountry = function (data, className = '') {
+//   //languages dynamically convert
+//   const languages = Object.values(data.languages).join(' ,');
 
-  //currencies dynamically convert
-  const currencies = Object.values(data.currencies)
-    .map(curr => `${curr.symbol}, ${curr.name}`)
-    .join(' ');
-  const HTML = `
-        <article class="country ${className}">
-          <img class="country__img" src="${data.flags.png}" />
-          <div class="country__data">
-            <h3 class="country__name">${data.name.common}</h3>
-            <h4 class="country__region">${data.region}</h4>
-            <p class="country__row"><span>👫</span>${(
-              +data.population / 1000000
-            ).toFixed(2)} M people</p>
-            <p class="country__row"><span>🗣️</span>${languages}</p>
-            <p class="country__row"><span>💰</span>${currencies}</p>
-           </div>
-        </article>`;
-  if (className === 'neighbor') {
-    neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
-  } else {
-    mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
-  }
-  countriesContainer.style.opacity = 1;
-};
+//   //currencies dynamically convert
+//   const currencies = Object.values(data.currencies)
+//     .map(curr => `${curr.symbol}, ${curr.name}`)
+//     .join(' ');
+//   const HTML = `
+//         <article class="country ${className}">
+//           <img class="country__img" src="${data.flags.png}" />
+//           <div class="country__data">
+//             <h3 class="country__name">${data.name.common}</h3>
+//             <h4 class="country__region">${data.region}</h4>
+//             <p class="country__row"><span>👫</span>${(
+//               +data.population / 1000000
+//             ).toFixed(2)} M people</p>
+//             <p class="country__row"><span>🗣️</span>${languages}</p>
+//             <p class="country__row"><span>💰</span>${currencies}</p>
+//            </div>
+//         </article>`;
+//   if (className === 'neighbor') {
+//     neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
+//   } else {
+//     mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
+//   }
+//   countriesContainer.style.opacity = 1;
+// };
 // //getting the geolocation
 // const getPosition = () => {
 //   return new Promise((resolve, reject) => {
@@ -493,6 +494,7 @@ const renderCountry = function (data, className = '') {
 
 ///////////////////////// or vice versa in get position where am i
 //getting the geolocation
+/*
 const getPosition = () => {
   return new Promise((resolve, reject) => {
     // navigator.geolocation.getCurrentPosition(
@@ -540,3 +542,88 @@ const whereAmI = (lat, lng) => {
       console.log(`${err.message}`);
     });
 };
+*/
+///////////////////////////////////////
+// Coding Challenge #2
+
+// const wait = seconds => {
+//   return new Promise(resolve => {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+// const createImage = imgPath => {
+//   return new Promise((resolve, reject) => {
+//     const img = document.createElement('img');
+//     img.src = imgPath;
+//     img.addEventListener('load', function () {
+//       imageContainer.appendChild(img);
+//       resolve(img);
+//     });
+//     img.addEventListener('error', () => {
+//       reject(new Error('Image not found'));
+//     });
+//   });
+// };
+// let currentImage;
+// createImage('img/img-1.jpg')
+//   .then(img => {
+//     currentImage = img;
+//     console.log('img-1 loaded');
+//     return wait(2);
+//   }) //setTimeout / wait + createImage একসাথে direct inline লিখলে chaining ভেঙে যায়। তাই আমরা wait return Promise করি, আর পরের createImage .then() এ call করি। .then() থেকে যা return করা হয়, সেটা পরের .then() এর input হিসেবে আসে। direct createImage('img/img-2.jpg') call করলে previous wait(2) কে respect করবে না, timing ঠিক থাকবে না।
+// .then(() => {
+//   currentImage.style.display = 'none';
+//   return createImage('img/img-2.jpg');
+// })
+// .then(img => {
+//   currentImage = img;
+//   console.log('img-2 loaded');
+//   return wait(2);
+// })
+// .then(() => {
+//   currentImage.style.display = 'none';
+//   return createImage('img/img-3.jpg');
+// })
+// .then(img => {
+//   currentImage = img;
+//   console.log('img-3 loaded');
+//   return wait(2);
+// })
+// .then(() => {
+//   currentImage.style.display = 'none';
+// })
+// .catch(err => console.error(err));
+
+//eivave set time out er mddhe dile hbena cz
+// createImage('img/img-1.jpg')
+//   .then(img => {
+//     setTimeout(() => {
+//       currentImage = img;
+//       console.log('img-1 loaded');
+//       currentImage.style.display = 'none';
+//       return createImage('img/img-2.jpg');
+//     }, 2000);
+//   })
+//   .then(img => {
+//     setTimeout(() => {
+//       currentImage = img;
+//       console.log('img-2 loaded');
+//       currentImage.style.display = 'none';
+//       return createImage('img/img-3.jpg');
+//     }, 2000);
+//   })
+//   .then(img => {
+//     setTimeout(() => {
+//       currentImage = img;
+//       console.log('img-3 loaded');
+//       currentImage.style.display = 'none';
+//     }, 2000);
+//   })
+//   .catch(err => console.error(err));
+
+/*তুমি return লিখেছ setTimeout এর ভিতরে।
+কিন্তু setTimeout callback return করা value কোনো Promise chain এ affect করে না।
+তাই .then() chain ভেঙে যাবে → পরের image load হবে না।
+Promise chaining এ return করতে হবে Promise, কিন্তু setTimeout return করে না → asynchronous task background এ চলে যায়। 
+সমাধান: wrap setTimeout in a Promise like wait function
+*/
