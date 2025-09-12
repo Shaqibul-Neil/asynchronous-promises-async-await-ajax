@@ -910,16 +910,16 @@ getThreeCountries('portugal', 'bangladesh', 'germany');
 //////////////////////////////////////////
 //Other Promise Combinators: race, allSettled and any
 //promise.race
-const getJson = async (url, errMsg = 'Something went wrong') => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`${errMsg} (${response.status})`);
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error(errMsg);
-  }
-};
+// const getJson = async (url, errMsg = 'Something went wrong') => {
+//   try {
+//     const response = await fetch(url);
+//     if (!response.ok) throw new Error(`${errMsg} (${response.status})`);
+//     const json = await response.json();
+//     return json;
+//   } catch (error) {
+//     console.error(errMsg);
+//   }
+// };
 // (async function () {
 //   const response = await Promise.race([
 //     getJson(`https://restcountries.com/v3.1/name/mexico`),
@@ -930,13 +930,13 @@ const getJson = async (url, errMsg = 'Something went wrong') => {
 // })();
 
 // a timeout fetch that automatically rejects after a certain time has passed. if the user has bad internet this is the usecase
-const timeout = function (seconds) {
-  return new Promise(function (_, reject) {
-    setTimeout(() => {
-      reject(new Error('Requests took too long'));
-    }, seconds * 1000);
-  });
-};
+// const timeout = function (seconds) {
+//   return new Promise(function (_, reject) {
+//     setTimeout(() => {
+//       reject(new Error('Requests took too long'));
+//     }, seconds * 1000);
+//   });
+// };
 
 // (async () => {
 //   try {
@@ -992,29 +992,29 @@ const timeout = function (seconds) {
 // })();
 
 //Promise.any
-(async () => {
-  try {
-    const result = await Promise.any([
-      Promise.resolve('Success'),
-      Promise.reject('ERROR'),
-      Promise.resolve('Another success'),
-    ]);
-    console.log(result);
-  } catch (error) {
-    console.error('Loser', error);
-  }
-})();
+// (async () => {
+//   try {
+//     const result = await Promise.any([
+//       Promise.resolve('Success'),
+//       Promise.reject('ERROR'),
+//       Promise.resolve('Another success'),
+//     ]);
+//     console.log(result);
+//   } catch (error) {
+//     console.error('Loser', error);
+//   }
+// })();
 
-//all error then promise.any gives aggregate error
-(async () => {
-  try {
-    const result = await Promise.any([
-      Promise.reject('ERROR'),
-      Promise.reject('ERROR'),
-      Promise.reject('ERROR'),
-    ]);
-    console.log(result);
-  } catch (error) {
-    console.error('Loser', error);
-  }
-})();
+// //all error then promise.any gives aggregate error
+// (async () => {
+//   try {
+//     const result = await Promise.any([
+//       Promise.reject('ERROR'),
+//       Promise.reject('ERROR'),
+//       Promise.reject('ERROR'),
+//     ]);
+//     console.log(result);
+//   } catch (error) {
+//     console.error('Loser', error);
+//   }
+// })();
