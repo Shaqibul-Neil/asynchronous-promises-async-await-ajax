@@ -952,15 +952,69 @@ const timeout = function (seconds) {
 // })();
 
 //promise.allSettled
+// (async () => {
+//   try {
+//     const result = await Promise.allSettled([
+//       getJson(`https://restcountries.com/v3.1/name/uganda`),
+//       getJson(`https://restcountries.com/v3.1/name/egypt`),
+//       timeout(1), // যদি 1 সেকেন্ডের মধ্যে কোনটাও resolve না করে, তাহলে এইটা reject করবে
+//     ]);
+//     console.log('Winner', result); // শুধু যে promise আগে settle হলো, তার result আসবে
+//   } catch (error) {
+//     console.error('Loser', error.message);
+//   }
+// })();
+
+// (async () => {
+//   try {
+//     const result = await Promise.allSettled([
+//       Promise.resolve('Success'),
+//       Promise.reject('ERROR'),
+//       Promise.resolve('Another success'),
+//     ]);
+//     console.log(result);
+//   } catch (error) {
+//     console.error('Loser', error.message);
+//   }
+// })();
+
+// (async () => {
+//   try {
+//     const result = await Promise.all([
+//       Promise.resolve('Success'),
+//       Promise.reject('ERROR'),
+//       Promise.resolve('Another success'),
+//     ]);
+//     console.log(result);
+//   } catch (error) {
+//     console.error('Loser', error);
+//   }
+// })();
+
+//Promise.any
 (async () => {
   try {
-    const result = await Promise.allSettled([
-      getJson(`https://restcountries.com/v3.1/name/uganda`),
-      getJson(`https://restcountries.com/v3.1/name/egypt`),
-      timeout(1), // যদি 1 সেকেন্ডের মধ্যে কোনটাও resolve না করে, তাহলে এইটা reject করবে
+    const result = await Promise.any([
+      Promise.resolve('Success'),
+      Promise.reject('ERROR'),
+      Promise.resolve('Another success'),
     ]);
-    console.log('Winner', result); // শুধু যে promise আগে settle হলো, তার result আসবে
+    console.log(result);
   } catch (error) {
-    console.error('Loser', error.message);
+    console.error('Loser', error);
+  }
+})();
+
+//all error then promise.any gives aggregate error
+(async () => {
+  try {
+    const result = await Promise.any([
+      Promise.reject('ERROR'),
+      Promise.reject('ERROR'),
+      Promise.reject('ERROR'),
+    ]);
+    console.log(result);
+  } catch (error) {
+    console.error('Loser', error);
   }
 })();
