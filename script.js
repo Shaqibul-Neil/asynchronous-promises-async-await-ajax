@@ -733,3 +733,79 @@ createImage('img/img-1.jpg')
 
 ///////////////////////////////////////
 // Consuming Promises with Async/Await
+/*
+const whereAmI = async function (country) {
+  // যখন async function call হয়, তখন ভেতরের normal code (await এর আগ পর্যন্ত)
+  // সাথে সাথেই synchronous ভাবে call stack এ run হবে।
+  console.log('awit before synchronous -1');
+  // এখানে এসে 'await' এ pause হবে।
+  // fetch() নিজে একটা promise return করে।
+  // async function এখান থেকে থেমে যাবে (non-blocking ভাবে),
+  // আর এই বাকি অংশ (continuation) microtask queue তে রাখা হবে।
+  const res = await fetch(`https://restcountries.com/v3.1/name/${country}`);
+  // fetch এর promise resolve হলে, Event Loop microtask queue থেকে
+  // এই continuation আবার call stack এ push করবে, তখন এখান থেকে resume হবে।
+  console.log('awit after synchronous--3');
+  console.log(res);
+};
+whereAmI('portugal');
+// যেহেতু await এ pause হয়েছিল, async ফাংশনের বাকি কোড তখনও চলেনি,
+// তাই এই লাইন আগে execute হবে।
+console.log('6---2');
+*/
+
+//rendering country in dom
+const renderCountry = function (data, className = '') {
+  //languages dynamically convert
+  const languages = Object.values(data.languages).join(' ,');
+
+  //currencies dynamically convert
+  const currencies = Object.values(data.currencies)
+    .map(curr => `${curr.symbol}, ${curr.name}`)
+    .join(' ');
+  const HTML = `
+        <article class="country ${className}">
+          <img class="country__img" src="${data.flags.png}" />
+          <div class="country__data">
+            <h3 class="country__name">${data.name.common}</h3>
+            <h4 class="country__region">${data.region}</h4>
+            <p class="country__row"><span>👫</span>${(
+              +data.population / 1000000
+            ).toFixed(2)} M people</p>
+            <p class="country__row"><span>🗣️</span>${languages}</p>
+            <p class="country__row"><span>💰</span>${currencies}</p>
+           </div>
+        </article>`;
+  if (className === 'neighbor') {
+    neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
+  } else {
+    mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
+  }
+  countriesContainer.style.opacity = 1;
+};
+//getting the geo location
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+//getting the country
+const whereAmI = async function () {
+  const geoPosition = await getPosition();
+  const { latitude: lat, longitude: lng } = geoPosition.coords;
+  const geoResponse = await fetch(
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
+  );
+  //console.log(geoResponse);
+  const geoData = await geoResponse.json();
+  console.log(geoData);
+
+  const response = await fetch(
+    `https://restcountries.com/v3.1/name/${geoData.countryName}`
+  );
+  console.log(response);
+  const data = await response.json();
+  console.log(data);
+  renderCountry(data[0]);
+};
+whereAmI();
