@@ -867,7 +867,7 @@ console.log('1. Getting the location');
 ///////////////////////////////////////////
 //Running Promises in Parallel
 //Let's now imagine that we wanted to get some data about three countries at the same time, but in which the order that the data arrives does not matter at all.
-
+/*
 const getJson = async (url, errMsg = 'Something went wrong') => {
   try {
     const response = await fetch(url);
@@ -889,7 +889,7 @@ const getThreeCountries = async function (c1, c2, c3) {
     // console.log(arrayOfCities); //we wanted an array of city
 
     //Prallel fetching
-    //helper function on promise constructor. static method
+    //helper function on promise constructor. static method. promise.all is a combinator function
     const datas = await Promise.all([
       getJson(`https://restcountries.com/v3.1/name/${c1}`),
       getJson(`https://restcountries.com/v3.1/name/${c2}`),
@@ -905,3 +905,50 @@ const getThreeCountries = async function (c1, c2, c3) {
   }
 };
 getThreeCountries('portugal', 'bangladesh', 'germany');
+*/
+
+//////////////////////////////////////////
+//Other Promise Combinators: race, allSettled and any
+//promise.race
+const getJson = async (url, errMsg = 'Something went wrong') => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`${errMsg} (${response.status})`);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(errMsg);
+  }
+};
+// (async function () {
+//   const response = await Promise.race([
+//     getJson(`https://restcountries.com/v3.1/name/mexico`),
+//     getJson(`https://restcountries.com/v3.1/name/egypt`),
+//     getJson(`https://restcountries.com/v3.1/name/bangladesh`),
+//   ]);
+//   console.log(response[0]);
+// })();
+
+// a timeout fetch that automatically rejects after a certain time has passed. if the user has bad internet this is the usecase
+const timeout = function (seconds) {
+  return new Promise(function (_, reject) {
+    setTimeout(() => {
+      reject(new Error('Requests took too long'));
+    }, seconds * 1000);
+  });
+};
+
+(async () => {
+  try {
+    const result = await Promise.race([
+      getJson(`https://restcountries.com/v3.1/name/uganda`),
+      getJson(`https://restcountries.com/v3.1/name/egypt`),
+      timeout(1), // যদি 1 সেকেন্ডের মধ্যে কোনটাও resolve না করে, তাহলে এইটা reject করবে
+    ]);
+    console.log('Winner', result); // শুধু যে promise আগে settle হলো, তার result আসবে
+  } catch (error) {
+    console.error('Loser', error.message);
+  }
+})();
+
+//promise.allSettled
