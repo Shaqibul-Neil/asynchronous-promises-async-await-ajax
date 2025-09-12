@@ -805,20 +805,59 @@ const whereAmI = async function () {
     if (!geoResponse.ok) throw new Error(`Problem getting the location`);
     //console.log(geoResponse);
     const geoData = await geoResponse.json();
-    console.log(geoData);
+    //console.log(geoData);
 
     const response = await fetch(
       `https://restcountries.com/v3.1/name/${geoData.countryName}`
     );
     if (!response.ok) throw new Error(`Problem getting the country`);
 
-    console.log(response);
+    //console.log(response);
     const data = await response.json();
-    console.log(data);
+    //console.log(data);
     renderCountry(data[0]);
-  } catch (error) {
-    console.error(error);
-    renderError(`Something went wrong : ${error.message}`);
+    return `You're in ${geoData.city}, ${geoData.countryName}`; //async func alwz return a promise
+  } catch (err) {
+    //console.error(error);
+    renderError(`Something went wrong : ${err.message}`);
+
+    //reject promise returned from async func. rethrowing error bcz even if there is an error in the async fun it will still return a promise which we can access through then(city) bt it will be undefined.
+    throw err;
   }
 };
-whereAmI();
+//whereAmI();
+
+/////////////////////////////////////////
+//Returning Values from Async Functions
+console.log('1. Getting the location');
+// const city = whereAmI(); //it will give a promise
+// console.log(city);
+//we r mixing then and asyc-->not a good practice
+// whereAmI()
+//   .then(city => console.log(`2. ${city}`))
+//   .catch(err => console.error(`2. ${err.message}`)) //this city parameter is the return value of that async func
+//   .finally(() => console.log('3. got the location'));
+//console.log('3. got the location');
+//or
+//so we use iife bcz we dont want another function
+//(function () {})();--> iifee
+// (async function () {
+//   try {
+//     const city = await whereAmI();
+//     console.log(`2. ${city}`);
+//   } catch (error) {
+//     console.error(`2. ${err.message}`);
+//   } finally {
+//     console.log('3. got the location');
+//   }
+// })();
+
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(`2. ${city}`);
+  } catch (error) {
+    console.error(`2. ${err.message}`);
+  }
+  console.log('3. got the location');
+})();
