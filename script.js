@@ -938,9 +938,23 @@ const timeout = function (seconds) {
   });
 };
 
+// (async () => {
+//   try {
+//     const result = await Promise.race([
+//       getJson(`https://restcountries.com/v3.1/name/uganda`),
+//       getJson(`https://restcountries.com/v3.1/name/egypt`),
+//       timeout(1), // যদি 1 সেকেন্ডের মধ্যে কোনটাও resolve না করে, তাহলে এইটা reject করবে
+//     ]);
+//     console.log('Winner', result); // শুধু যে promise আগে settle হলো, তার result আসবে
+//   } catch (error) {
+//     console.error('Loser', error.message);
+//   }
+// })();
+
+//promise.allSettled
 (async () => {
   try {
-    const result = await Promise.race([
+    const result = await Promise.allSettled([
       getJson(`https://restcountries.com/v3.1/name/uganda`),
       getJson(`https://restcountries.com/v3.1/name/egypt`),
       timeout(1), // যদি 1 সেকেন্ডের মধ্যে কোনটাও resolve না করে, তাহলে এইটা reject করবে
@@ -950,5 +964,3 @@ const timeout = function (seconds) {
     console.error('Loser', error.message);
   }
 })();
-
-//promise.allSettled
