@@ -397,3 +397,146 @@ Event loop দেখে main thread free, তখন callback চালায় →
 
 /////////////////////////////////////////
 //Promisifying the Geolocation API
+
+// navigator.geolocation.getCurrentPosition(
+//   position => {
+//     console.log(position);
+//   },
+//   err => console.error(err)
+// ); //async
+//console.log('Getting Position');
+
+//rendering country on dom
+const renderCountry = function (data, className = '') {
+  //languages dynamically convert
+  const languages = Object.values(data.languages).join(' ,');
+
+  //currencies dynamically convert
+  const currencies = Object.values(data.currencies)
+    .map(curr => `${curr.symbol}, ${curr.name}`)
+    .join(' ');
+  const HTML = `
+        <article class="country ${className}">
+          <img class="country__img" src="${data.flags.png}" />
+          <div class="country__data">
+            <h3 class="country__name">${data.name.common}</h3>
+            <h4 class="country__region">${data.region}</h4>
+            <p class="country__row"><span>👫</span>${(
+              +data.population / 1000000
+            ).toFixed(2)} M people</p>
+            <p class="country__row"><span>🗣️</span>${languages}</p>
+            <p class="country__row"><span>💰</span>${currencies}</p>
+           </div>
+        </article>`;
+  if (className === 'neighbor') {
+    neighborCountriesContainer.insertAdjacentHTML('beforeend', HTML);
+  } else {
+    mainCountryContainer.insertAdjacentHTML('beforeend', HTML);
+  }
+  countriesContainer.style.opacity = 1;
+};
+// //getting the geolocation
+// const getPosition = () => {
+//   return new Promise((resolve, reject) => {
+//     // navigator.geolocation.getCurrentPosition(
+//     //   position => resolve(position),
+//     //   //success call back
+//     //   err => reject(err) //reject call back
+//     //); or
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
+
+// //getting the country based on geolocation
+// const whereAmI = () => {
+//   //we are calling get position here to get the coords
+//   /*getPosition() return করে একটি Promise, যেটা resolve হবে user location পাওয়ার পর।
+// .then() এ আমরা coords destructure করি → fetch call return করি।
+// মুখ্য জিনিস: fetch return করতে হবে, যাতে পরের .then() এ fetch response handle করা যায়। */
+//   getPosition()
+//     .then(pos => {
+//       const { latitude: lat, longitude: lng } = pos.coords;
+//       return fetch(
+//         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
+//       ); //we need to return fetch from here to chain it
+//     })
+//     // fetch(
+//     //   `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
+//     // )
+//     .then(response => {
+//       console.log(response);
+//       if (!response.ok)
+//         throw new Error(`Problem with geocoding : ${response.status}`);
+//       return response.json();
+//     })
+//     .then(data => {
+//       //console.log(data);
+//       console.log(`You're in ${data.city}, ${data.countryName}`);
+//       return fetch(`https://restcountries.com/v3.1/name/${data.countryName}`);
+//     })
+//     .then(response => {
+//       //console.log(response);
+//       if (!response.ok)
+//         throw new Error(`Country not found (${response.status})`);
+//       return response.json();
+//     })
+//     .then(data => {
+//       renderCountry(data[0]);
+//       //console.log(data);
+//     })
+//     .catch(err => {
+//       console.log(`${err.message}`);
+//     });
+// };
+
+// whereAmI();
+
+///////////////////////// or vice versa in get position where am i
+//getting the geolocation
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+    // navigator.geolocation.getCurrentPosition(
+    //   position => resolve(position),
+    //   //success call back
+    //   err => reject(err) //reject call back
+    //); or
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+getPosition()
+  .then(pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    whereAmI(lat, lng);
+  })
+  .catch(err => console.error(err));
+
+//getting the country based on geolocation
+const whereAmI = (lat, lng) => {
+  fetch(
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
+  )
+    .then(response => {
+      //console.log(response);
+      if (!response.ok)
+        throw new Error(`Problem with geocoding : ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      //console.log(data);
+      //console.log(`You're in ${data.city}, ${data.countryName}`);
+      return fetch(`https://restcountries.com/v3.1/name/${data.countryName}`);
+    })
+    .then(response => {
+      //console.log(response);
+      if (!response.ok)
+        throw new Error(`Country not found (${response.status})`);
+      return response.json();
+    })
+    .then(data => {
+      renderCountry(data[0]);
+      //console.log(data);
+    })
+    .catch(err => {
+      console.log(`${err.message}`);
+    });
+};
