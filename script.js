@@ -627,3 +627,106 @@ const whereAmI = (lat, lng) => {
 Promise chaining এ return করতে হবে Promise, কিন্তু setTimeout return করে না → asynchronous task background এ চলে যায়। 
 সমাধান: wrap setTimeout in a Promise like wait function
 */
+/*
+const createImage = imgPath => {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img');
+    img.src = imgPath;
+    //When the image is done loading, append it to the DOM element
+    img.addEventListener('load', () => {
+      imageContainer.appendChild(img);
+      //The fulfilled value should be the image element itself
+      resolve(img);
+    });
+    //In case there is an error loading the image ('error' event), reject the promise.
+    img.addEventListener('error', () => {
+      reject(new Error('Image not Found'));
+    });
+  });
+};
+
+//After the image has loaded, pause execution for 2 seconds using the wait function.We need to wrap settimeout in a promise bcz otherwise the then will not work.
+const wait = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms * 1000));
+};
+
+//Comsume the promise using .then and also add an error handler
+// hide the current image, to hide it we need a global variable
+let currentImage;
+createImage('img/img-1.jpg')
+  .then(img => {
+    currentImage = img;
+    console.log('Img-1 loaded');
+    return wait(2);
+  }) //setTimeout / wait + createImage একসাথে direct inline লিখলে chaining ভেঙে যায়। তাই আমরা wait return Promise করি, আর পরের createImage .then() এ call করি। .then() থেকে যা return করা হয়, সেটা পরের .then() এর input হিসেবে আসে। direct createImage('img/img-2.jpg') call করলে previous wait(2) কে respect করবে না, timing ঠিক থাকবে না।
+  .then(() => {
+    //After the 2 seconds have passed, hide the 1st image (set display to 'none'), and load a second image
+    currentImage.style.display = 'none';
+    return createImage('img/img-2.jpg');
+  })
+  .then(img => {
+    currentImage = img;
+    console.log('Img-2 loaded');
+    return wait(2);
+  })
+  .then(() => {
+    //After the 2 seconds have passed, hide the 2nd image (set display to 'none'), and load a 3rd image
+    currentImage.style.display = 'none';
+    return createImage('img/img-3.jpg');
+  })
+  .then(img => {
+    currentImage = img;
+    console.log('Img-3 loaded');
+    return wait(2);
+  })
+  .then(() => {
+    //After the 2 seconds have passed, hide the 3rd image.
+    currentImage.style.display = 'none';
+  })
+  .catch(err => console.error(err));
+*/
+
+//using asyc await
+// const createImage = imgPath => {
+//   return new Promise((resolve, reject) => {
+//     const img = document.createElement('img');
+//     img.src = imgPath;
+//     //When the image is done loading, append it to the DOM element
+//     img.addEventListener('load', () => {
+//       imageContainer.appendChild(img);
+//       //The fulfilled value should be the image element itself
+//       resolve(img);
+//     });
+//     //In case there is an error loading the image ('error' event), reject the promise.
+//     img.addEventListener('error', () => {
+//       reject(new Error('Image not Found'));
+//     });
+//   });
+// };
+// //After the image has loaded, pause execution for 2 seconds using the wait function.We need to wrap settimeout in a promise bcz otherwise the then will not work.
+// const wait = ms => {
+//   return new Promise(resolve => setTimeout(resolve, ms * 1000));
+// };
+
+// const loadImages = async () => {
+//   try {
+//     //1st image
+//     let image = await createImage('img/img-1.jpg');
+//     console.log('img-1 loaded');
+//     await wait(2);
+//     image.style.display = 'none';
+//     //2nd image
+//     image = await createImage('img/img-2.jpg');
+//     console.log('img-2 loaded');
+//     await wait(2);
+//     image.style.display = 'none';
+//     //3rd image
+//     image = await createImage('img/img-3.jpg');
+//     console.log('img-3 loaded');
+//     await wait(2);
+//     image.style.display = 'none';
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+// loadImages();
