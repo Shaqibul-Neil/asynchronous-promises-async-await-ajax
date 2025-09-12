@@ -326,3 +326,42 @@ whereAmI(-33.933, 18.474);
 //   }
 //   console.log(res);
 // }); //4
+
+///////////////////////////////////////
+// Building a Simple Promise
+
+const lotteryPromise = new Promise(function (resolve, reject) {
+  console.log('lottery draw happening'); //Synchronous start):new Promise(...) constructor সাথে সাথে চালু হয়।
+  setTimeout(() => {
+    //Async scheduling setTimeout(..., 2000) Web API কে টাস্ক দেয়।
+    //
+    if (Math.random() >= 0.5) resolve('You Win');
+    //whatever we pass in resolve we can consume it later with then
+    else reject(new Error('You Lose'));
+    console.log('Happy to finally get the result'); //eta age asbe if else er
+  }, 2000);
+});
+//lottery promise is a promise object. resolve বা reject হওয়ার পর .then()/.catch() এর callback microtask queue তে যায়। Microtask সবসময় callback queue এর আগেই execute হয়, কিন্তু এখানে callback already শেষ হয়েছে, তাই microtask এখনই চালু হয়।
+lotteryPromise
+  .then(res => console.log(res))
+  .catch(err => console.error(err))
+  .finally(() => console.log('Lottery Draw finished'));
+
+/*JavaScript মূল thread এ এটা এক্সিকিউট করে না, বরং Web API environment কে বলে দেয় —
+"এই callback function টা ২০০০ms পরে চালাও।"
+তারপর JS বাকি কোড execute করতে থাকে (blocking না হয়ে)।
+২০০০ms শেষে, callback function টা Callback Queue তে চলে আসে → Event Loop চেক করে main thread ফাঁকা আছে কিনা → ফাঁকা হলেই callback টা main thread এ ঢুকিয়ে দেয়।
+তাই setTimeout asynchronous: কারণ এটা immediate কাজ না করে পরে schedule করে।
+তোর lottery example এও একই জিনিস হচ্ছে:
+Promise constructor সঙ্গে সঙ্গে চলে যায় (console.log('lottery draw happening'))।
+Timer (setTimeout) background এ সেট হয়।
+২ সেকেন্ড পরে callback queue তে function ফেরত আসে।
+Event loop দেখে main thread free, তখন callback চালায় → resolve/reject কল করে। 
+//
+কেন console.log('Happy...') আগে আসে .then() বা .catch() এর output এর চেয়ে?
+কারণ resolve বা reject call করলে promise “settled” হয়, কিন্তু .then() / .catch() callback synchronous না।
+ওগুলো microtask queue তে যায়, আর microtask queue execute হয় বর্তমান call stack খালি হওয়ার পরে।
+মানে দাঁড়ালো →
+আগে synchronous log গুলো বের হবে (Happy to finally get the result)
+তারপর async .then() বা .catch() execute হবে।
+*/
