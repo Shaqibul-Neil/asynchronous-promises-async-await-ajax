@@ -753,6 +753,11 @@ whereAmI('portugal');
 // তাই এই লাইন আগে execute হবে।
 console.log('6---2');
 */
+//error message
+const renderError = msg => {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  countriesContainer.style.opacity = 1;
+};
 
 //rendering country in dom
 const renderCountry = function (data, className = '') {
@@ -791,21 +796,29 @@ const getPosition = () => {
 };
 //getting the country
 const whereAmI = async function () {
-  const geoPosition = await getPosition();
-  const { latitude: lat, longitude: lng } = geoPosition.coords;
-  const geoResponse = await fetch(
-    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
-  );
-  //console.log(geoResponse);
-  const geoData = await geoResponse.json();
-  console.log(geoData);
+  try {
+    const geoPosition = await getPosition();
+    const { latitude: lat, longitude: lng } = geoPosition.coords;
+    const geoResponse = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
+    );
+    if (!geoResponse.ok) throw new Error(`Problem getting the location`);
+    //console.log(geoResponse);
+    const geoData = await geoResponse.json();
+    console.log(geoData);
 
-  const response = await fetch(
-    `https://restcountries.com/v3.1/name/${geoData.countryName}`
-  );
-  console.log(response);
-  const data = await response.json();
-  console.log(data);
-  renderCountry(data[0]);
+    const response = await fetch(
+      `https://restcountries.com/v3.1/name/${geoData.countryName}`
+    );
+    if (!response.ok) throw new Error(`Problem getting the country`);
+
+    console.log(response);
+    const data = await response.json();
+    console.log(data);
+    renderCountry(data[0]);
+  } catch (error) {
+    console.error(error);
+    renderError(`Something went wrong : ${error.message}`);
+  }
 };
 whereAmI();
