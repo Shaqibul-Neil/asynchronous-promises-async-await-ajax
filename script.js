@@ -308,13 +308,21 @@ whereAmI(-33.933, 18.474);
 
 ///////////////////////////////////////
 // The Event Loop in Practice
-setTimeout(() => {
-  console.log('Timeout'); // Callback Queue
-}, 0); //4
+// setTimeout(() => {
+//   console.log('Timeout'); // Callback Queue
+// }, 0); //5
 
-console.log('Start'); //1
-console.log('End'); //2
+// console.log('Start'); //1
+// console.log('End'); //2
 
-Promise.resolve('Resolved').then(res => {
-  console.log(res);
-}); //3
+// Promise.resolve('Resolved').then(res => {
+//   console.log(res);
+// }); //3
+
+// Promise.resolve('Resolved 2').then(res => {
+//   console.log(res);
+//   for (let i = 0; i < 10000; i++) {
+//     console.log(i);
+//   }
+//   console.log(res);
+// }); //4
