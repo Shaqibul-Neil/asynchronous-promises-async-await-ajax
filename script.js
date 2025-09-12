@@ -1018,3 +1018,64 @@ getThreeCountries('portugal', 'bangladesh', 'germany');
 //     console.error('Loser', error);
 //   }
 // })();
+
+///////////////////////////////////////
+// Coding Challenge #3
+//Image লোড হওয়া আসলে একটা asynchronous কাজ। এজন্য Promise দিয়ে handle করতে হবে।
+
+// const wait = function (seconds) {
+//   return new Promise(function (resolve) {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+// const createImage = function (imgPath) {
+//   return new Promise(function (resolve, reject) {
+//     const img = document.createElement('img');
+//     img.src = imgPath;
+
+//     img.addEventListener('load', function () {
+//       imageContainer.append(img);
+//       resolve(img);
+//     });
+
+//     img.addEventListener('error', function () {
+//       reject(new Error('Image not found'));
+//     });
+//   });
+// };
+
+// const loadNPause = async function () {
+//   try {
+//     // 1. Load image 1
+//     let img = await createImage('img/img-1.jpg');
+//     console.log('Img-1 loaded');
+//     await wait(2);
+//     img.style.display = 'none';
+
+//     // 1. Load image 2
+//     img = await createImage('img/img-2.jpg');
+//     console.log('Img-2 loaded');
+//     await wait(2);
+//     img.style.display = 'none';
+
+//     // 1. Load image 3
+//     img = await createImage('img/img-3.jpg');
+//     console.log('Img-3 loaded');
+//     await wait(2);
+//     img.style.display = 'none';
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+// // loadNPause();
+
+// const loadAll = async function (imgArr) {
+//   try {
+//     const imgs = imgArr.map(async img => await createImage(img));
+//     const imgsEl = await Promise.all(imgs);
+//     console.log(imgsEl);
+//     console.log(imgs);
+//     imgsEl.forEach(img => img.classList.add('parallel'));
+//   } catch (error) {}
+// };
+// loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);
